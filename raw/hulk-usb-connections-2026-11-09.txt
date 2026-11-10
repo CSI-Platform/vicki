@@ -1,0 +1,236 @@
+# Raw capture - Hulk USB, Wi-Fi, Bluetooth, serial
+# Date: 2026-11-09 (America/Denver)
+# Host: demo
+# Kernel: Linux 7.0.0-43-generic x86_64
+# OS: Ubuntu 26.04.1 LTS
+# Note: console excerpts, trimmed to the devices and settings being documented.
+# Public copy: local IPs, MACs, SSIDs, usernames, and device paths are replaced.
+
+$ lsusb
+Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 001 Device 002: ID 1d57:fa60 Xenta JLab Work
+Bus 001 Device 003: ID 13d3:3571 IMC Networks Bluetooth Radio
+Bus 001 Device 004: ID 0b05:1939 ASUSTek Computer, Inc. AURA LED Controller
+Bus 001 Device 010: ID 35d6:2510 Bridgesil USB2.1 Hub
+Bus 001 Device 011: ID 303a:4000 Espressif Systems Espressif Device
+Bus 001 Device 012: ID abcd:1234 LogiLink UDisk flash drive
+Bus 002 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+Bus 002 Device 002: ID 35d6:3510 Bridgesil USB3.2 Hub
+Bus 002 Device 003: ID 0bda:8153 Realtek Semiconductor Corp. RTL8153 Gigabit Ethernet Adapter
+Bus 003 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 004 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+Bus 005 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 005 Device 003: ID 2357:0604 TP-Link TP-Link UB500 Adapter
+Bus 005 Device 008: ID 0483:5740 STMicroelectronics Virtual COM Port
+Bus 006 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+Bus 006 Device 003: ID 0e8d:7961 MediaTek Inc. Wireless_Device
+
+$ lsusb -t (relevant branches)
+/:  Bus 001.Port 001: Dev 001, Class=root_hub, Driver=xhci_hcd/10p, 480M
+    |__ Port 003: Dev 010, If 0, Class=Hub, Driver=hub/4p, 480M
+        |__ Port 003: Dev 012, If 0, Class=Mass Storage, Driver=usb-storage, 480M
+        |__ Port 004: Dev 011, If 0, Class=Communications, Driver=cdc_ncm, 12M
+        |__ Port 004: Dev 011, If 1, Class=CDC Data, Driver=cdc_ncm, 12M
+/:  Bus 002.Port 001: Dev 001, Class=root_hub, Driver=xhci_hcd/4p, 10000M
+    |__ Port 003: Dev 002, If 0, Class=Hub, Driver=hub/4p, 5000M
+        |__ Port 001: Dev 003, If 0, Class=Vendor Specific Class, Driver=r8152, 5000M
+/:  Bus 005.Port 001: Dev 001, Class=root_hub, Driver=xhci_hcd/4p, 480M
+    |__ Port 003: Dev 008, If 0, Class=Communications, Driver=cdc_acm, 12M
+    |__ Port 004: Dev 003, If 0, Class=Wireless, Driver=btusb, 12M
+/:  Bus 006.Port 001: Dev 001, Class=root_hub, Driver=xhci_hcd/4p, 10000M
+    |__ Port 001: Dev 003, If 0, Class=Vendor Specific Class, Driver=mt7921u, 5000M
+
+$ ip -br link; ip -br addr; ip route
+lo               UNKNOWN        00:00:00:00:00:00 <LOOPBACK,UP,LOWER_UP>
+enp10s0          UP             02:00:00:00:00:04 <BROADCAST,MULTICAST,UP,LOWER_UP>
+wlp9s0           DOWN           02:00:00:00:00:05 <NO-CARRIER,BROADCAST,MULTICAST,UP>
+enx020000000003  DOWN           02:00:00:00:00:03 <NO-CARRIER,BROADCAST,MULTICAST,UP>
+enx020000000002  UP             02:00:00:00:00:02 <BROADCAST,MULTICAST,UP,LOWER_UP>
+wlx020000000001  DOWN           02:00:00:00:00:01 <NO-CARRIER,BROADCAST,MULTICAST,UP>
+
+lo               UNKNOWN        127.0.0.1/8 ::1/8
+enp10s0          UP             192.0.2.10/24 2001:db8::10/64 ...
+enx020000000002  UP             192.0.2.147/24 2001:db8::147/128 ...
+
+default via 192.0.2.1 dev enp10s0 proto dhcp src 192.0.2.10 metric 100
+default via 192.0.2.1 dev enx020000000002 proto dhcp src 192.0.2.147 metric 101
+192.0.2.0/24 dev enp10s0 proto kernel scope link src 192.0.2.10 metric 100
+192.0.2.0/24 dev enx020000000002 proto kernel scope link src 192.0.2.147 metric 101
+
+$ nmcli device status
+DEVICE                   TYPE      STATE                   CONNECTION
+enp10s0                  ethernet  connected               netplan-enp10s0
+enx020000000002          ethernet  connected               Wired connection 2
+lo                       loopback  connected (externally)  lo
+wlp9s0                   wifi      disconnected            --
+wlx020000000001          wifi      disconnected            --
+p2p-dev-wlp9s0           wifi-p2p  disconnected            --
+p2p-dev-wlx020000000001  wifi-p2p  disconnected            --
+enx020000000003          ethernet  unavailable             --
+
+$ nmcli connection show --active
+NAME                UUID                                  TYPE      DEVICE
+netplan-enp10s0     cebc4acd-15fc-359a-81bc-37b89a8f81e1  ethernet  enp10s0
+Wired connection 2  59fd97d2-f1be-36aa-bef9-0cef18529960  ethernet  enx020000000002
+lo                  f86dc4e1-a70f-4858-8450-2d5cb8226b8b  loopback  lo
+
+$ rfkill list
+0: hci0: Bluetooth
+	Soft blocked: yes
+	Hard blocked: no
+1: phy0: Wireless LAN
+	Soft blocked: no
+	Hard blocked: no
+3: hci1: Bluetooth
+	Soft blocked: no
+	Hard blocked: no
+5: phy3: Wireless LAN
+	Soft blocked: no
+	Hard blocked: no
+
+$ iw dev
+phy#3
+	Interface wlx020000000001
+		ifindex 7
+		wdev 0x300000001
+		addr 02:00:00:00:00:01
+		type managed
+		txpower 3.00 dBm
+phy#0
+	Interface wlp9s0
+		ifindex 3
+		wdev 0x1
+		addr 02:00:00:00:00:05
+		type managed
+
+$ iw reg get
+global
+country 00: DFS-UNSET
+	(2402 - 2472 @ 40), (N/A, 20), (N/A)
+	(5170 - 5250 @ 80), (N/A, 20), (N/A), AUTO-BW, PASSIVE-SCAN
+	(5250 - 5330 @ 80), (N/A, 20), (0 ms), DFS, AUTO-BW, PASSIVE-SCAN
+	(5490 - 5730 @ 160), (N/A, 20), (0 ms), DFS, PASSIVE-SCAN
+	(5735 - 5835 @ 80), (N/A, 20), (N/A), PASSIVE-SCAN
+	(57240 - 63720 @ 2160), (N/A, 0), (N/A)
+
+$ iw phy (Band 4 / 6 GHz excerpt)
+Band 4:
+	Frequencies:
+		* 5955.0 MHz [1] (disabled)
+		* 5975.0 MHz [5] (disabled)
+		* 5995.0 MHz [9] (disabled)
+		* 6015.0 MHz [13] (disabled)
+		... all 6 GHz channels disabled ...
+
+$ nmcli -f GENERAL,CAPABILITIES,WIFI-PROPERTIES device show wlx020000000001
+GENERAL.DEVICE:                         wlx020000000001
+GENERAL.TYPE:                           wifi
+GENERAL.VENDOR:                         MediaTek Inc.
+GENERAL.PRODUCT:                        Wireless_Device
+GENERAL.DRIVER:                         mt7921u
+GENERAL.DRIVER-VERSION:                 7.0.0-43-generic
+GENERAL.FIRMWARE-VERSION:               ____010000-20260224110949
+GENERAL.HWADDR:                         02:00:00:00:00:01
+GENERAL.STATE:                          30 (disconnected)
+GENERAL.PATH:                           pci-0000:0d:00.3-usb-0:1:1.0
+CAPABILITIES.CARRIER-DETECT:            no
+WIFI-PROPERTIES.WPA2:                   yes
+WIFI-PROPERTIES.5GHZ:                   yes
+WIFI-PROPERTIES.6GHZ:                   yes
+
+$ nmcli -f SSID,BSSID,CHAN,FREQ,SIGNAL,SECURITY device wifi list ifname wlx020000000001
+SSID        BSSID              CHAN  FREQ      SIGNAL  SECURITY
+Home       02:00:00:8D:01:A1  6     2437 MHz  67      WPA2 WPA3
+Home       02:00:00:94:01:A2  157   5785 MHz  42      WPA2 WPA3
+Setup-AP  02:00:01:75:82:39  11    2462 MHz  65      WPA2 WPA3
+Setup-AP  02:00:01:7C:82:3A  44    5220 MHz  34      WPA2 WPA3
+
+$ bluetoothctl list; bluetoothctl show
+Controller 02:00:00:00:00:0a hulk #2 [default]
+Controller 02:00:00:00:00:0b hulk
+Controller 02:00:00:00:00:0a (public)
+	Name: hulk #2
+	Powered: yes
+	Discoverable: yes
+	Pairable: yes
+
+$ bluetoothctl devices
+Device 02:00:00:00:00:0d 6E-6B-98-21-3D-F2
+Device 02:00:00:00:00:0c LE-Jabra Evolve3 85
+Device 02:00:00:00:00:0e 6A-92-20-4B-75-23
+
+$ bluetoothctl info 02:00:00:00:00:0c
+Device 02:00:00:00:00:0c (random)
+	Name: LE-Jabra Evolve3 85
+	Alias: LE-Jabra Evolve3 85
+	Paired: no
+	Bonded: no
+	Trusted: no
+	Blocked: no
+	Connected: no
+	LegacyPairing: no
+	UUID: GN Netcom (0000feff-0000-1000-8000-00805f9b34fb)
+	RSSI: 0xffffffb0 (-80)
+
+$ bluetoothctl pair 02:00:00:00:00:0c
+Attempting to pair with 02:00:00:00:00:0c
+[CHG] Device 02:00:00:00:00:0c Connected: yes
+Failed to pair: org.bluez.Error.AuthenticationFailed
+[SIGNAL] LE.Disconnected - org.bluez.Reason.Local, Connection terminated by local host
+[CHG] Device 02:00:00:00:00:0c Connected: no
+
+$ lsblk -o NAME,SIZE,TYPE,FSTYPE,LABEL,MOUNTPOINTS,MODEL (storage only)
+sda           249M disk                                                          UDisk
+└─sda1        249M part vfat           /run/media/<user>/DRIVER
+nvme0n1     465.8G disk                                                          CT500P3PSSD8
+├─nvme0n1p1     1G part vfat           /boot/efi
+└─nvme0n1p2 464.7G part ext4           /
+
+$ findmnt /dev/sda1
+TARGET                    SOURCE    FSTYPE OPTIONS
+/run/media/<user>/DRIVER /dev/sda1 vfat   rw,nosuid,nodev,relatime,uid=1000,gid=1000,...
+
+$ ls -la /run/media/<user>/DRIVER
+-rwxr-xr-x 1 <user> <user> 7602759 Jul 29  2025 WifiAutoInstallSetup.exe
+
+$ file /run/media/<user>/DRIVER/WifiAutoInstallSetup.exe
+PE32 executable for MS Windows 4.00 (GUI), Intel i386, 8 sections
+
+$ ls -l /dev/ttyACM0; getfacl /dev/ttyACM0
+crw-rw---- 1 root dialout 166, 0 Nov  9 16:10 /dev/ttyACM0
+# file: dev/ttyACM0
+# owner: root
+# group: dialout
+user::rw-
+group::rw-
+other::---
+
+$ ls -l /dev/serial/by-id
+usb-Flipper_Devices_Inc._Flipper_Rom4r_flip_Rom4r-if00 -> ../../ttyACM0
+
+$ id -nG
+<user> adm cdrom sudo dip plugdev users lpadmin docker ollama
+
+$ lsusb -v -d 0e8d:7961 (excerpt)
+bcdUSB               3.20
+iManufacturer        2 MediaTek Inc.
+iProduct             3 Wireless_Device
+bInterfaceClass      255 Vendor Specific Class
+bInterfaceSubClass   255 Vendor Specific Subclass
+bInterfaceProtocol   255 Vendor Specific Protocol
+MaxPower             160mA
+
+$ journalctl -k -b (relevant excerpt)
+Bluetooth: hci1: RTL: loading rtl_bt/rtl8761bu_fw.bin
+Bluetooth: hci1: RTL: loading rtl_bt/rtl8761bu_config.bin
+Bluetooth: hci1: RTL: fw version 0xdfc6d922
+mt7921u 6-1:1.0: HW/SW Version: 0x8a108a10, Build Time: 20260224110909a
+mt7921u 6-1:1.0: WM Firmware Version: ____010000, Build Time: 20260224110949
+mt7921u 6-1:1.0 wlx020000000001: renamed from wlan0
+mt7921u 5-2:1.0: Message 00003eed (seq 14) timeout
+mt7921u 5-2:1.0: Failed to get patch semaphore
+mt7921u 5-2:1.0: hardware init failed
+cdc_acm 5-3:1.0: ttyACM0: USB ACM device
+cdc_ncm 1-3.4:1.0 eth0: register 'cdc_ncm' ... 02:00:00:00:00:02
+
+# Note: dmesg itself was restricted; journalctl -k was used instead.

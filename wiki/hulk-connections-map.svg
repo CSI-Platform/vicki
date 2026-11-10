@@ -1,0 +1,238 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="1200" viewBox="0 0 1500 1200">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#5f6368"/>
+    </marker>
+    <style>
+      .title { font-family: "DejaVu Sans", Arial, sans-serif; font-size: 30px; font-weight: 700; fill: #202124; }
+      .subtitle { font-family: "DejaVu Sans", Arial, sans-serif; font-size: 15px; fill: #5f6368; }
+      .colhead { font-family: "DejaVu Sans", Arial, sans-serif; font-size: 16px; font-weight: 700; fill: #5f6368; }
+      .h { font-family: "DejaVu Sans", Arial, sans-serif; font-size: 16px; font-weight: 700; fill: #202124; }
+      .b { font-family: "DejaVu Sans", Arial, sans-serif; font-size: 14px; fill: #202124; }
+      .muted { font-family: "DejaVu Sans", Arial, sans-serif; font-size: 13px; fill: #5f6368; }
+      .pill { font-family: "DejaVu Sans", Arial, sans-serif; font-size: 12px; font-weight: 700; fill: #ffffff; }
+      .legend { font-family: "DejaVu Sans", Arial, sans-serif; font-size: 13px; fill: #5f6368; }
+      .footer-title { font-family: "DejaVu Sans", Arial, sans-serif; font-size: 16px; font-weight: 700; fill: #202124; }
+    </style>
+  </defs>
+
+  <rect width="1500" height="1200" fill="#f7f8fa"/>
+
+  <text x="40" y="50" class="title">Hulk — USB and Wireless Connections</text>
+  <text x="40" y="78" class="subtitle">Visual map of the physical devices, Linux drivers, what the OS sees, and the next action. Live checks: 2026-11-09.</text>
+
+  <rect x="30" y="100" width="1440" height="52" rx="10" fill="#1a73e8"/>
+  <text x="50" y="132" fill="#ffffff" font-family="DejaVu Sans, Arial, sans-serif" font-size="18" font-weight="700">Hulk PC — Ubuntu 26.04 · kernel 7.0.0-43 · main Ethernet enp10s0 (192.0.2.10)</text>
+
+  <text x="60" y="178" class="colhead">1. Physical device</text>
+  <text x="430" y="178" class="colhead">2. Linux driver</text>
+  <text x="800" y="178" class="colhead">3. What you see</text>
+  <text x="1170" y="178" class="colhead">4. Next step / workflow</text>
+
+  <!-- Row 1: EDUP Wi-Fi -->
+  <circle cx="35" cy="267" r="16" fill="#1a73e8"/>
+  <text x="35" y="273" text-anchor="middle" fill="#ffffff" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="700">1</text>
+
+  <rect x="60" y="200" width="340" height="135" rx="10" fill="#fff4e5" stroke="#f29900" stroke-width="2"/>
+  <text x="80" y="228" class="h">USB 3 port (direct)</text>
+  <text x="80" y="253" class="h">EDUP EP-AX1672</text>
+  <text x="80" y="278" class="b">0e8d:7961 · AX3000 6E</text>
+  <text x="80" y="302" class="muted">MediaTek MT7921AU</text>
+
+  <line x1="400" y1="267" x2="425" y2="267" stroke="#5f6368" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <rect x="430" y="200" width="340" height="135" rx="10" fill="#e8f0fe" stroke="#1a73e8" stroke-width="2"/>
+  <text x="450" y="228" class="h">mt7921u</text>
+  <text x="450" y="253" class="b">in-kernel driver</text>
+  <text x="450" y="278" class="b">firmware loaded</text>
+  <text x="450" y="302" class="muted">No vendor package needed</text>
+
+  <line x1="770" y1="267" x2="795" y2="267" stroke="#5f6368" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <rect x="800" y="200" width="340" height="135" rx="10" fill="#e8f0fe" stroke="#1a73e8" stroke-width="2"/>
+  <text x="820" y="228" class="h">wlx020000000001</text>
+  <text x="820" y="253" class="b">2.4 / 5 / 6 GHz hardware</text>
+  <text x="820" y="278" class="b">2x2 antennas</text>
+  <text x="820" y="302" class="muted">NetworkManager managed</text>
+
+  <line x1="1140" y1="267" x2="1165" y2="267" stroke="#5f6368" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <rect x="1170" y="200" width="290" height="135" rx="10" fill="#fff4e5" stroke="#f29900" stroke-width="2"/>
+  <rect x="1190" y="212" width="112" height="24" rx="12" fill="#f29900"/>
+  <text x="1246" y="229" text-anchor="middle" class="pill">needs setup</text>
+  <text x="1190" y="252" class="h">Wi-Fi workflow</text>
+  <text x="1190" y="276" class="b">1. scans Home 2.4 + 5</text>
+  <text x="1190" y="300" class="b">2. 6 GHz: country US set</text>
+  <text x="1190" y="324" class="b">3. needs 6E AP + password</text>
+
+  <!-- Row 2: TP-Link / Jabra -->
+  <circle cx="35" cy="422" r="16" fill="#1a73e8"/>
+  <text x="35" y="428" text-anchor="middle" fill="#ffffff" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="700">2</text>
+
+  <rect x="60" y="355" width="340" height="135" rx="10" fill="#fff4e5" stroke="#f29900" stroke-width="2"/>
+  <text x="80" y="383" class="h">USB port (direct)</text>
+  <text x="80" y="408" class="h">TP-Link UB500</text>
+  <text x="80" y="433" class="b">2357:0604 · Bluetooth 5.0</text>
+  <text x="80" y="457" class="muted">Bluetooth radio</text>
+
+  <line x1="400" y1="422" x2="425" y2="422" stroke="#5f6368" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <rect x="430" y="355" width="340" height="135" rx="10" fill="#e8f0fe" stroke="#1a73e8" stroke-width="2"/>
+  <text x="450" y="383" class="h">btusb</text>
+  <text x="450" y="408" class="b">BlueZ controller</text>
+  <text x="450" y="433" class="b">hci1 (default)</text>
+  <text x="450" y="457" class="muted">Internal hci0 is soft-blocked</text>
+
+  <line x1="770" y1="422" x2="795" y2="422" stroke="#5f6368" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <rect x="800" y="355" width="340" height="135" rx="10" fill="#e8f0fe" stroke="#1a73e8" stroke-width="2"/>
+  <text x="820" y="383" class="h">hci1 powered</text>
+  <text x="820" y="408" class="b">Jabra: LE-Jabra Evolve3 85</text>
+  <text x="820" y="433" class="b">visible, not paired</text>
+  <text x="820" y="457" class="muted">LE random address</text>
+
+  <line x1="1140" y1="422" x2="1165" y2="422" stroke="#5f6368" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <rect x="1170" y="355" width="290" height="135" rx="10" fill="#fff4e5" stroke="#f29900" stroke-width="2"/>
+  <rect x="1190" y="367" width="112" height="24" rx="12" fill="#f29900"/>
+  <text x="1246" y="384" text-anchor="middle" class="pill">needs pairing</text>
+  <text x="1190" y="407" class="h">Bluetooth workflow</text>
+  <text x="1190" y="431" class="b">1. put Jabra in pairing mode</text>
+  <text x="1190" y="455" class="b">2. pair: AuthenticationFailed</text>
+  <text x="1190" y="479" class="b">3. retry / check multiuse</text>
+
+  <!-- Row 3: Flipper -->
+  <circle cx="35" cy="577" r="16" fill="#1a73e8"/>
+  <text x="35" y="583" text-anchor="middle" fill="#ffffff" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="700">3</text>
+
+  <rect x="60" y="510" width="340" height="135" rx="10" fill="#fff4e5" stroke="#f29900" stroke-width="2"/>
+  <text x="80" y="538" class="h">USB port (direct)</text>
+  <text x="80" y="563" class="h">Flipper Zero</text>
+  <text x="80" y="588" class="b">0483:5740</text>
+  <text x="80" y="612" class="muted">Flipper Rom4r</text>
+
+  <line x1="400" y1="577" x2="425" y2="577" stroke="#5f6368" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <rect x="430" y="510" width="340" height="135" rx="10" fill="#e8f0fe" stroke="#1a73e8" stroke-width="2"/>
+  <text x="450" y="538" class="h">cdc_acm</text>
+  <text x="450" y="563" class="b">USB serial</text>
+  <text x="450" y="588" class="b">ttyACM0</text>
+  <text x="450" y="612" class="muted">Virtual COM port</text>
+
+  <line x1="770" y1="577" x2="795" y2="577" stroke="#5f6368" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <rect x="800" y="510" width="340" height="135" rx="10" fill="#e8f0fe" stroke="#1a73e8" stroke-width="2"/>
+  <text x="820" y="538" class="h">/dev/ttyACM0</text>
+  <text x="820" y="563" class="b">owner: root · group: dialout</text>
+  <text x="820" y="588" class="b">mode: crw-rw----</text>
+  <text x="820" y="612" class="muted">&lt;user&gt; is not in dialout</text>
+
+  <line x1="1140" y1="577" x2="1165" y2="577" stroke="#5f6368" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <rect x="1170" y="510" width="290" height="135" rx="10" fill="#fff4e5" stroke="#f29900" stroke-width="2"/>
+  <rect x="1190" y="522" width="130" height="24" rx="12" fill="#f29900"/>
+  <text x="1255" y="539" text-anchor="middle" class="pill">needs permission</text>
+  <text x="1190" y="562" class="h">Permission workflow</text>
+  <text x="1190" y="586" class="b">1. sudo usermod -aG dialout "$USER"</text>
+  <text x="1190" y="610" class="b">2. log out / log in</text>
+  <text x="1190" y="634" class="b">3. qFlipper or serial app</text>
+
+  <!-- Row 4: ESP32 -->
+  <circle cx="35" cy="732" r="16" fill="#5f6368"/>
+  <text x="35" y="738" text-anchor="middle" fill="#ffffff" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="700">4</text>
+
+  <rect x="60" y="665" width="340" height="135" rx="10" fill="#f1f3f4" stroke="#5f6368" stroke-width="2"/>
+  <text x="80" y="693" class="h">USB hub</text>
+  <text x="80" y="718" class="h">ESP32 board</text>
+  <text x="80" y="743" class="b">303a:4000</text>
+  <text x="80" y="767" class="muted">Espressif Systems</text>
+
+  <line x1="400" y1="732" x2="425" y2="732" stroke="#5f6368" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <rect x="430" y="665" width="340" height="135" rx="10" fill="#e8f0fe" stroke="#1a73e8" stroke-width="2"/>
+  <text x="450" y="693" class="h">cdc_ncm</text>
+  <text x="450" y="718" class="b">USB network gadget</text>
+  <text x="450" y="743" class="b">not a serial console</text>
+  <text x="450" y="767" class="muted">No tty is created</text>
+
+  <line x1="770" y1="732" x2="795" y2="732" stroke="#5f6368" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <rect x="800" y="665" width="340" height="135" rx="10" fill="#e8f0fe" stroke="#1a73e8" stroke-width="2"/>
+  <text x="820" y="693" class="h">enx020000000002</text>
+  <text x="820" y="718" class="b">192.0.2.147/24</text>
+  <text x="820" y="743" class="b">second default route (metric 101)</text>
+  <text x="820" y="767" class="muted">Main route is metric 100</text>
+
+  <line x1="1140" y1="732" x2="1165" y2="732" stroke="#5f6368" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <rect x="1170" y="665" width="290" height="135" rx="10" fill="#f1f3f4" stroke="#5f6368" stroke-width="2"/>
+  <rect x="1190" y="677" width="80" height="24" rx="12" fill="#5f6368"/>
+  <text x="1230" y="694" text-anchor="middle" class="pill">review</text>
+  <text x="1190" y="717" class="h">Network workflow</text>
+  <text x="1190" y="741" class="b">1. is this intentional?</text>
+  <text x="1190" y="765" class="b">2. if not: disable autoconnect</text>
+  <text x="1190" y="789" class="b">3. no serial tty</text>
+
+  <!-- Row 5: Driver stick -->
+  <circle cx="35" cy="887" r="16" fill="#d93025"/>
+  <text x="35" y="893" text-anchor="middle" fill="#ffffff" font-family="DejaVu Sans, Arial, sans-serif" font-size="14" font-weight="700">5</text>
+
+  <rect x="60" y="820" width="340" height="135" rx="10" fill="#fce8e6" stroke="#d93025" stroke-width="2"/>
+  <text x="80" y="848" class="h">USB hub</text>
+  <text x="80" y="873" class="h">Driver stick</text>
+  <text x="80" y="898" class="b">abcd:1234</text>
+  <text x="80" y="922" class="muted">LogiLink UDisk, 249 MB</text>
+
+  <line x1="400" y1="887" x2="425" y2="887" stroke="#5f6368" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <rect x="430" y="820" width="340" height="135" rx="10" fill="#e8f0fe" stroke="#1a73e8" stroke-width="2"/>
+  <text x="450" y="848" class="h">usb-storage</text>
+  <text x="450" y="873" class="b">vfat filesystem</text>
+  <text x="450" y="898" class="b">mounted read/write</text>
+  <text x="450" y="922" class="muted">No Linux driver on it</text>
+
+  <line x1="770" y1="887" x2="795" y2="887" stroke="#5f6368" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <rect x="800" y="820" width="340" height="135" rx="10" fill="#e8f0fe" stroke="#1a73e8" stroke-width="2"/>
+  <text x="820" y="848" class="h">/run/media/&lt;user&gt;/DRIVER</text>
+  <text x="820" y="873" class="b">WifiAutoInstallSetup.exe</text>
+  <text x="820" y="898" class="b">7.6 MB PE32 GUI</text>
+  <text x="820" y="922" class="muted">Windows installer only</text>
+
+  <line x1="1140" y1="887" x2="1165" y2="887" stroke="#5f6368" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <rect x="1170" y="820" width="290" height="135" rx="10" fill="#fce8e6" stroke="#d93025" stroke-width="2"/>
+  <rect x="1190" y="832" width="100" height="24" rx="12" fill="#d93025"/>
+  <text x="1240" y="849" text-anchor="middle" class="pill">do not run</text>
+  <text x="1190" y="872" class="h">Installer workflow</text>
+  <text x="1190" y="896" class="b">1. Windows PE32 installer</text>
+  <text x="1190" y="920" class="b">2. Linux uses mt7921u</text>
+  <text x="1190" y="944" class="b">3. inspect only, in a VM</text>
+
+  <!-- Footer: Wi-Fi -->
+  <rect x="60" y="985" width="680" height="150" rx="10" fill="#fff4e5" stroke="#f29900" stroke-width="2"/>
+  <text x="80" y="1015" class="footer-title">Wi-Fi: the adapter is fine; 6 GHz is enabled</text>
+  <text x="80" y="1043" class="b">• iw reg get = country US → 6 GHz channels enabled.</text>
+  <text x="80" y="1068" class="b">• No 6E SSID is visible yet. The adapter needs SSID + password.</text>
+  <text x="80" y="1093" class="b">• Both antennas must be connected for 2x2. One antenna = 1x1.</text>
+  <text x="80" y="1118" class="b">• Keep it on USB 3. It failed on USB 2 (patch semaphore).</text>
+
+  <!-- Footer: Bluetooth -->
+  <rect x="760" y="985" width="680" height="150" rx="10" fill="#e8f0fe" stroke="#1a73e8" stroke-width="2"/>
+  <text x="780" y="1015" class="footer-title">Bluetooth: Jabra is visible but not paired</text>
+  <text x="780" y="1043" class="b">• It advertises as LE-Jabra Evolve3 85 (random LE address).</text>
+  <text x="780" y="1068" class="b">• Pairing mode: hold the On/Off switch until the LED flashes blue.</text>
+  <text x="780" y="1093" class="b">• Previous attempt reached Connected: yes, then AuthenticationFailed.</text>
+  <text x="780" y="1118" class="b">• Audio needs a successful pair and connect; PipeWire is running.</text>
+
+  <!-- Legend -->
+  <rect x="60" y="1160" width="18" height="18" rx="3" fill="#e6f4ea" stroke="#34a853" stroke-width="2"/>
+  <text x="86" y="1174" class="legend">working</text>
+  <rect x="170" y="1160" width="18" height="18" rx="3" fill="#fff4e5" stroke="#f29900" stroke-width="2"/>
+  <text x="196" y="1174" class="legend">needs setup</text>
+  <rect x="300" y="1160" width="18" height="18" rx="3" fill="#fce8e6" stroke="#d93025" stroke-width="2"/>
+  <text x="326" y="1174" class="legend">do not use</text>
+  <rect x="430" y="1160" width="18" height="18" rx="3" fill="#f1f3f4" stroke="#5f6368" stroke-width="2"/>
+  <text x="456" y="1174" class="legend">review</text>
+  <text x="560" y="1174" class="legend">Compiled from live checks on 2026-11-09. Full settings table: hulk-connections.md</text>
+</svg>

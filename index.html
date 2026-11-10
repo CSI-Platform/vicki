@@ -1,0 +1,998 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>vicki — wiki routes</title>
+<style>
+  :root {
+    --bg: #f5f3ee;
+    --surface: #fffdf8;
+    --surface-2: #efede6;
+    --surface-3: #e7e4dc;
+    --ink: #1f2328;
+    --ink-2: #4b5563;
+    --muted: #6b7280;
+    --line: #d8d4cb;
+    --line-strong: #b9b4aa;
+    --accent: #1a73e8;
+    --accent-soft: #e8f0fe;
+    --green: #2e7d32;
+    --amber: #a85f00;
+    --red: #b3261e;
+    --radius-lg: 18px;
+    --radius-md: 14px;
+    --radius-sm: 10px;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  a { color: inherit; }
+  button { font: inherit; }
+
+  .shell {
+    width: min(1480px, calc(100% - 48px));
+    margin: 0 auto;
+    padding: 28px 0 40px;
+  }
+
+  .topbar {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--line);
+  }
+  .brand { display: flex; align-items: flex-start; gap: 14px; }
+  .mark {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: var(--ink);
+    color: var(--surface);
+    display: grid;
+    place-items: center;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: .02em;
+    flex: 0 0 auto;
+    margin-top: 2px;
+  }
+  .eyebrow {
+    margin: 0 0 4px;
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: .01em;
+  }
+  h1 {
+    margin: 0;
+    font-size: clamp(24px, 2.4vw, 31px);
+    line-height: 1.12;
+    font-weight: 600;
+    letter-spacing: -.02em;
+  }
+  .lede {
+    max-width: 64ch;
+    margin: 8px 0 0;
+    color: var(--ink-2);
+    font-size: 14px;
+  }
+  .topmeta { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    min-height: 28px;
+    padding: 0 10px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--surface);
+    color: var(--ink-2);
+    font-size: 12px;
+    white-space: nowrap;
+  }
+  .chip strong { color: var(--ink); font-weight: 500; }
+
+  .map-card {
+    margin-top: 20px;
+    padding: 22px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+  }
+  .map-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 16px;
+  }
+  .map-head h2 {
+    margin: 0;
+    font-size: 18px;
+    line-height: 1.25;
+    font-weight: 600;
+    letter-spacing: -.01em;
+  }
+  .map-head p { margin: 4px 0 0; color: var(--muted); font-size: 13px; }
+  .map-actions { display: flex; gap: 8px; flex: 0 0 auto; }
+  .button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 34px;
+    padding: 0 12px;
+    border: 1px solid var(--line-strong);
+    border-radius: 9px;
+    background: var(--surface);
+    color: var(--ink);
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease;
+  }
+  .button:hover { background: var(--surface-2); border-color: var(--ink-2); }
+  .button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .button.primary { background: var(--ink); border-color: var(--ink); color: var(--surface); }
+  .button.primary:hover { background: #343a40; }
+
+  .graph-wrap {
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    background: #fbfaf6;
+    overflow: hidden;
+  }
+  #graph { display: block; width: 100%; height: auto; min-height: 520px; }
+  .graph-wrap svg text { user-select: none; }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 20px;
+    padding-top: 14px;
+    color: var(--muted);
+    font-size: 12px;
+  }
+  .legend-group { display: inline-flex; align-items: center; gap: 7px; }
+  .line-key { width: 26px; height: 0; border-top: 1.5px solid var(--line-strong); display: inline-block; }
+  .line-key.dashed { border-top-style: dashed; }
+  .line-key.dotted { border-top-style: dotted; border-top-color: var(--accent); }
+  .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex: 0 0 auto; }
+  .dot.working { background: var(--green); }
+  .dot.setup { background: var(--amber); }
+  .dot.review { background: var(--muted); }
+  .dot.danger { background: var(--red); }
+
+  .route-card {
+    position: fixed;
+    z-index: 60;
+    width: 360px;
+    max-width: calc(100vw - 32px);
+    max-height: calc(100vh - 32px);
+    overflow: auto;
+    padding: 18px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    background: var(--surface);
+    box-shadow: 0 12px 28px rgba(31, 35, 40, .12);
+    animation: card-in 160ms cubic-bezier(.2, .7, .2, 1) both;
+  }
+  .route-card[hidden] { display: none; }
+  .route-card[data-pinned="true"] { border-color: var(--accent); }
+  @keyframes card-in {
+    from { opacity: 0; transform: translateY(4px) scale(.99); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 4px;
+  }
+  .card-close {
+    width: 28px;
+    height: 28px;
+    border: 1px solid transparent;
+    border-radius: 7px;
+    background: transparent;
+    color: var(--muted);
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .card-close:hover { background: var(--surface-2); color: var(--ink); }
+  .card-close:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .route-card h2 {
+    margin: 0;
+    font-size: 18px;
+    line-height: 1.3;
+    font-weight: 600;
+    letter-spacing: -.01em;
+  }
+  .route-card .path {
+    margin: 4px 0 0;
+    color: var(--muted);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 12px;
+    overflow-wrap: anywhere;
+  }
+  .route-card .summary { margin: 10px 0 0; color: var(--ink-2); font-size: 13px; }
+  .card-block {
+    border-top: 1px solid var(--line);
+    margin-top: 12px;
+    padding-top: 10px;
+  }
+  .card-block .eyebrow { margin-bottom: 6px; }
+  .route-card .button { margin-top: 14px; }
+
+  .route {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 5px;
+    margin: 0;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .route button {
+    padding: 1px 2px;
+    border: 0;
+    background: none;
+    color: var(--ink-2);
+    cursor: pointer;
+    text-decoration: underline;
+    text-decoration-color: var(--line-strong);
+    text-underline-offset: 2px;
+  }
+  .route button:hover { color: var(--accent); text-decoration-color: currentColor; }
+  .route .sep { color: var(--line-strong); }
+  .related { display: flex; flex-wrap: wrap; gap: 6px; }
+  .related button {
+    padding: 4px 8px;
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    background: var(--surface-2);
+    color: var(--ink-2);
+    cursor: pointer;
+    font-size: 11px;
+    transition: border-color 140ms ease, color 140ms ease, background-color 140ms ease;
+  }
+  .related button:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+
+  footer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 12px 24px;
+    margin-top: 18px;
+    color: var(--muted);
+    font-size: 11px;
+  }
+  footer a { color: var(--ink-2); text-decoration-color: var(--line-strong); text-underline-offset: 2px; }
+
+  /* Graph */
+  .edge {
+    fill: none;
+    stroke: var(--line-strong);
+    stroke-width: 1.25;
+    transition: opacity 160ms ease, stroke 160ms ease, stroke-width 160ms ease;
+  }
+  .edge.source { stroke-dasharray: 5 4; opacity: .55; }
+  .edge.cross { stroke: var(--accent); stroke-dasharray: 2 5; opacity: .22; stroke-width: 1.25; }
+  .edge.is-active { stroke: var(--accent); stroke-width: 2; opacity: 1; }
+  .edge.is-related { stroke: var(--accent); opacity: .75; stroke-width: 1.6; }
+  .edge.is-dim { opacity: .12; }
+
+  .node { cursor: pointer; outline: none; }
+  .node-bg {
+    fill: var(--surface);
+    stroke: var(--line);
+    stroke-width: 1;
+    transition: fill 160ms ease, stroke 160ms ease, stroke-width 160ms ease;
+  }
+  .node-rail { fill: var(--accent); opacity: .9; }
+  .node-icon { color: var(--ink-2); pointer-events: none; }
+  .node-title {
+    fill: var(--ink);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: -.005em;
+    pointer-events: none;
+  }
+  .node-sub {
+    fill: var(--muted);
+    font-size: 11px;
+    pointer-events: none;
+  }
+  .node-tag {
+    fill: var(--muted);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 10px;
+    pointer-events: none;
+  }
+  .status-dot { stroke: var(--surface); stroke-width: 1.5; pointer-events: none; }
+  .status-dot.working { fill: var(--green); }
+  .status-dot.setup { fill: var(--amber); }
+  .status-dot.review { fill: var(--muted); }
+  .status-dot.danger { fill: var(--red); }
+
+  .dwell-ring {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 120ms ease;
+  }
+  .node.is-dwelling .dwell-ring {
+    opacity: 1;
+    animation: dwell 900ms linear forwards;
+  }
+  @keyframes dwell {
+    to { stroke-dashoffset: 0; }
+  }
+
+  .kind-hub .node-bg { fill: var(--ink); stroke: var(--ink); }
+  .kind-hub .node-title { fill: var(--surface); }
+  .kind-hub .node-sub { fill: rgba(255,253,248,.68); }
+  .kind-hub .node-icon { color: var(--surface); }
+  .kind-hub .node-rail { display: none; }
+  .kind-hub.is-selected .node-bg { fill: var(--ink); stroke: var(--accent); }
+  .kind-hub.is-selected .node-title { fill: var(--surface); }
+  .kind-hub.is-selected .node-sub { fill: rgba(255,253,248,.68); }
+  .kind-hub.is-selected .node-icon { color: var(--surface); }
+  .kind-schema .node-bg { fill: var(--surface-2); stroke-dasharray: 4 3; }
+  .kind-source .node-bg { fill: var(--surface-2); }
+  .kind-source .node-rail { display: none; }
+
+  .node:hover .node-bg,
+  .node:focus-visible .node-bg { stroke: var(--accent); stroke-width: 1.5; }
+  .node:focus-visible .node-bg { stroke-width: 2; }
+  .node.is-active .node-bg { stroke: var(--accent); stroke-width: 1.5; }
+  .node.is-selected .node-bg { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 2; }
+  .node.kind-hub.is-selected .node-bg { fill: var(--ink); stroke: var(--accent); stroke-width: 2; }
+  .node.kind-hub.is-selected .node-title { fill: var(--surface); }
+  .node.kind-hub.is-selected .node-sub { fill: rgba(255,253,248,.68); }
+  .node.kind-hub.is-selected .node-icon { color: var(--surface); }
+  .node.is-dim { opacity: .32; }
+  .node.is-related .node-bg { stroke: var(--accent); stroke-dasharray: 3 3; }
+  .node, .edge { transition: opacity 160ms ease; }
+
+  .is-loaded .node { animation: settle 420ms cubic-bezier(.2,.7,.2,1) both; }
+  @keyframes settle {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @media (max-width: 900px) {
+    .shell { width: min(100% - 28px, 1480px); padding-top: 20px; }
+    .topbar { flex-direction: column; }
+    .topmeta { justify-content: flex-start; }
+    .map-card { padding: 16px; }
+    .map-head { flex-direction: column; }
+    #graph { min-height: 380px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+  <header class="topbar">
+    <div class="brand">
+      <div class="mark" aria-hidden="true">V</div>
+      <div>
+        <p class="eyebrow">vicki / demo wiki</p>
+        <h1>Wiki routes</h1>
+        <p class="lede">Raw sources are immutable. Wiki pages compile them. The schema keeps the routes honest. Hover a node for one second to open its card; click to pin it.</p>
+      </div>
+    </div>
+    <div class="topmeta" aria-label="Wiki counts">
+      <span class="chip"><strong>2</strong> wiki pages</span>
+      <span class="chip"><strong>2</strong> raw sources</span>
+      <span class="chip"><strong>1</strong> diagram</span>
+    </div>
+  </header>
+
+  <main>
+    <section class="map-card" aria-labelledby="map-title">
+      <div class="map-head">
+        <div>
+          <p class="eyebrow">Route map</p>
+          <h2 id="map-title">Pages, sources, and the hardware they describe</h2>
+          <p>Solid lines are page routes. Dashed lines are raw sources. Dotted lines are related routes. Hover a node for one second to open its card; click to pin it.</p>
+        </div>
+        <div class="map-actions">
+          <button class="button" id="reset" type="button">Reset route</button>
+        </div>
+      </div>
+
+      <div class="graph-wrap">
+        <svg id="graph" viewBox="0 0 1240 900" role="img" aria-label="Interactive graph of the vicki demo wiki. Hover a node for one second to open its route card."></svg>
+      </div>
+
+      <div class="legend" aria-label="Legend">
+        <span class="legend-group"><span class="line-key"></span> page route</span>
+        <span class="legend-group"><span class="line-key dashed"></span> raw source</span>
+        <span class="legend-group"><span class="line-key dotted"></span> related</span>
+        <span class="legend-group"><span class="dot working"></span> working</span>
+        <span class="legend-group"><span class="dot setup"></span> needs setup</span>
+        <span class="legend-group"><span class="dot review"></span> review</span>
+        <span class="legend-group"><span class="dot danger"></span> do not use</span>
+      </div>
+    </section>
+
+  </main>
+
+  <aside id="route-card" class="route-card" role="dialog" aria-modal="false" aria-labelledby="card-title" hidden>
+    <div class="card-top">
+      <p class="eyebrow" id="card-kind">Section</p>
+      <button class="card-close" id="card-close" type="button" aria-label="Close route card">×</button>
+    </div>
+    <h2 id="card-title"></h2>
+    <p class="path" id="card-path"></p>
+    <p class="summary" id="card-summary"></p>
+    <div class="card-block">
+      <p class="eyebrow">Route</p>
+      <p class="route" id="card-route"></p>
+    </div>
+    <div class="card-block">
+      <p class="eyebrow">Related</p>
+      <div class="related" id="card-related"></div>
+    </div>
+    <a class="button primary" id="card-link" href="#">Open</a>
+  </aside>
+
+  <footer>
+    <span>Wiki pattern: <a href="https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f">Andrej Karpathy’s LLM Wiki</a>. Raw stays raw; the wiki compiles it.</span>
+    <span>Design pass: <a href="https://github.com/heydamir/unslop">unslop</a> by Damir Sokolovsky, CC BY 4.0.</span>
+  </footer>
+</div>
+
+<script>
+(() => {
+  const NS = "http://www.w3.org/2000/svg";
+  const NODES = [
+    {
+      id: "index", kind: "hub", x: 40, y: 390, w: 230, h: 72,
+      title: "index.md", sub: "Wiki index · 2 pages, 2 raw sources",
+      icon: "index", tag: "index",
+      path: "index.md", linkLabel: "Open index",
+      summary: "The content-oriented catalog. It links the two compiled wiki pages, the two raw sources, and the placeholder folders in this public demo.",
+      related: ["schema", "inventory", "connections", "notes", "experiments"]
+    },
+    {
+      id: "schema", kind: "schema", x: 40, y: 120, w: 230, h: 58,
+      parent: "index",
+      title: "SCHEMA.md", sub: "Schema · raw immutability, wiki rules",
+      icon: "book", tag: "schema",
+      path: "SCHEMA.md", linkLabel: "Open schema",
+      summary: "The schema keeps raw sources immutable, wiki pages compiled, and the route map honest. It also lists the public sanitization rules.",
+      related: ["index"]
+    },
+    {
+      id: "inventory", kind: "page", x: 360, y: 170, w: 220, h: 58,
+      parent: "index",
+      title: "hulk-inventory.md", sub: "Machine and software summary",
+      icon: "file", tag: "page",
+      path: "wiki/hulk-inventory.md", linkLabel: "Open page",
+      summary: "The compiled machine inventory: OS, CPU, GPU, RAM, disks, software counts, and the probe notes from the 2026-11-08 AppLens scan.",
+      related: ["appens", "machine", "disks", "software", "probe"]
+    },
+    {
+      id: "connections", kind: "page", x: 360, y: 360, w: 220, h: 58,
+      parent: "index",
+      title: "hulk-connections.md", sub: "USB, Wi-Fi, Bluetooth, serial",
+      icon: "file", tag: "page",
+      path: "wiki/hulk-connections.md", linkLabel: "Open page",
+      summary: "The compiled USB and wireless settings map. It documents the EDUP adapter, TP-Link radio, Jabra headset, Flipper serial port, ESP32 USB network, and the driver stick.",
+      related: ["usb", "wifi", "bt", "serial", "esp32", "driver", "questions", "usbraw", "svg"]
+    },
+    {
+      id: "notes", kind: "page", x: 360, y: 560, w: 220, h: 58,
+      parent: "index",
+      title: "notes/", sub: "Private in source · not included",
+      icon: "folder", tag: "folder",
+      path: "notes/", linkLabel: "Open folder",
+      summary: "The source wiki has three private notes. They are not included in this public demo; this folder is a placeholder for the route.",
+      related: ["index"]
+    },
+    {
+      id: "experiments", kind: "page", x: 360, y: 660, w: 220, h: 58,
+      parent: "index",
+      title: "experiments/", sub: "Placeholder in demo",
+      icon: "folder", tag: "folder",
+      path: "experiments/", linkLabel: "Open folder",
+      summary: "The source experiment folder is empty. This public demo keeps the placeholder so the route stays visible.",
+      related: ["index"]
+    },
+
+    { id: "machine", kind: "section", x: 680, y: 80, w: 240, h: 50, parent: "inventory", title: "Machine", sub: "OS, CPU, GPU, RAM", icon: "chip", path: "wiki/hulk-inventory.md#machine", linkLabel: "Open section", summary: "Ubuntu 26.04.1 LTS on an AMD Ryzen 5 5600X with 31.2 GiB RAM and an NVIDIA GPU.", related: ["inventory"] },
+    { id: "disks", kind: "section", x: 680, y: 145, w: 240, h: 50, parent: "inventory", title: "Disks", sub: "Volumes and free space", icon: "disk", path: "wiki/hulk-inventory.md#disks-non-virtual", linkLabel: "Open section", summary: "The main ext4 volume and the EFI vfat volume. The squashfs snap mounts are read-only images, not the main disk.", related: ["inventory"] },
+    { id: "software", kind: "section", x: 680, y: 210, w: 240, h: 50, parent: "inventory", title: "Software counts", sub: "Desktop, packages, runtimes", icon: "file", path: "wiki/hulk-inventory.md#software-counts", linkLabel: "Open section", summary: "44 desktop applications, 2,351 packages, and 73 runtimes or frameworks at capture time.", related: ["inventory"] },
+    { id: "probe", kind: "section", x: 680, y: 275, w: 240, h: 50, parent: "inventory", title: "Probe notes", sub: "What worked, what did not", icon: "help", path: "wiki/hulk-inventory.md#probe-notes", linkLabel: "Open section", summary: "The scan succeeded for OS, CPU, memory, uptime, graphics, mounts, desktop apps, dpkg, and Snap. RPM, pacman, Flatpak, and Homebrew were unavailable, as expected.", related: ["inventory"] },
+
+    { id: "usb", kind: "section", x: 680, y: 390, w: 240, h: 50, parent: "connections", title: "USB map", sub: "Direct and hub devices", icon: "usb", path: "wiki/hulk-connections.md#usb-map", linkLabel: "Open section", summary: "The physical USB tree: EDUP, TP-Link, Flipper, the internal Bluetooth radio, the Bridgesil hub, the driver stick, the ESP32, and the hub Ethernet.", related: ["wifi", "bt", "serial", "esp32", "driver"] },
+    { id: "wifi", kind: "section", x: 680, y: 455, w: 240, h: 50, parent: "connections", title: "Wi-Fi adapter", sub: "EDUP EP-AX1672 · needs setup", icon: "wifi", status: "setup", path: "wiki/hulk-connections.md#wifi-adapter", linkLabel: "Open section", summary: "The MediaTek MT7921AU is on USB 3 with the mt7921u driver and firmware loaded. The US regulatory domain is now set, so the 6 GHz channels are enabled. No 6 GHz AP is visible yet; the adapter still needs an SSID and password.", related: ["usb", "esp32", "driver", "questions"] },
+    { id: "bt", kind: "section", x: 680, y: 520, w: 240, h: 50, parent: "connections", title: "Bluetooth", sub: "TP-Link UB500 · Jabra needs pairing", icon: "bt", status: "setup", path: "wiki/hulk-connections.md#bluetooth", linkLabel: "Open section", summary: "The TP-Link UB500 is hci1 and the default controller. The Jabra Evolve3 85 is visible as LE-Jabra Evolve3 85 but not paired. The previous pairing attempt reached Connected: yes, then AuthenticationFailed.", related: ["usb", "questions"] },
+    { id: "serial", kind: "section", x: 680, y: 585, w: 240, h: 50, parent: "connections", title: "Flipper serial", sub: "/dev/ttyACM0 · needs permission", icon: "terminal", status: "setup", path: "wiki/hulk-connections.md#flipper-zero-serial-port", linkLabel: "Open section", summary: "The Flipper Zero is a CDC ACM serial device at /dev/ttyACM0, owned by root:dialout. The user is not in dialout, so qFlipper or a serial app will get permission denied until the group changes.", related: ["usb", "esp32", "questions"] },
+    { id: "esp32", kind: "section", x: 680, y: 650, w: 240, h: 50, parent: "connections", title: "ESP32 board", sub: "USB Ethernet · review route", icon: "chip", status: "review", path: "wiki/hulk-connections.md#esp32-board", linkLabel: "Open section", summary: "The ESP32 is a USB network gadget, not a serial console. It has 192.0.2.147/24 and a second default route at metric 101. The main Ethernet is still preferred at metric 100.", related: ["usb", "wifi", "serial", "questions"] },
+    { id: "driver", kind: "section", x: 680, y: 715, w: 240, h: 50, parent: "connections", title: "Driver stick", sub: "Windows installer · not needed", icon: "disk", status: "danger", path: "wiki/hulk-connections.md#wifi-adapter", linkLabel: "Open section", summary: "The stick mounted at /run/media/<user>/DRIVER contains only WifiAutoInstallSetup.exe, a Windows PE32 installer. The Linux mt7921u driver is already working; do not run the installer on Hulk.", related: ["usb", "wifi"] },
+    { id: "questions", kind: "section", x: 680, y: 780, w: 240, h: 50, parent: "connections", title: "Open questions", sub: "SSID, antennas, ESP32 route, dialout", icon: "help", status: "setup", path: "wiki/hulk-connections.md#open-questions", linkLabel: "Open section", summary: "Four decisions remain: which SSID to join, whether both antennas are connected, whether the ESP32 route is intentional, and whether to fix the Flipper serial permission.", related: ["wifi", "esp32", "serial"] },
+
+    {
+      id: "appens", kind: "source", x: 1020, y: 150, w: 190, h: 50,
+      parent: "inventory",
+      title: "AppLens inventory JSON", sub: "raw · 2026-11-08",
+      icon: "file", tag: "raw",
+      path: "raw/AppLens_Results_hulk_2026-11-08T175336Z.json", linkLabel: "Open raw",
+      summary: "The immutable AppLens inventory scan that the machine and software summary was compiled from. Schema 3.0, inventory mode, Linux platform.",
+      related: ["inventory"]
+    },
+    {
+      id: "usbraw", kind: "source", x: 1020, y: 500, w: 190, h: 50,
+      parent: "connections",
+      title: "USB capture", sub: "raw · 2026-11-09",
+      icon: "file", tag: "raw",
+      path: "raw/hulk-usb-connections-2026-11-09.txt", linkLabel: "Open raw",
+      summary: "The immutable live capture: lsusb, ip, nmcli, rfkill, iw, bluetoothctl, lsblk, serial permissions, and kernel excerpts. The settings page compiles this source.",
+      related: ["connections"]
+    },
+    {
+      id: "svg", kind: "source", x: 1020, y: 565, w: 190, h: 50,
+      parent: "connections",
+      title: "Connection map", sub: "artifact · SVG",
+      icon: "diagram", tag: "svg",
+      path: "wiki/hulk-connections-map.svg", linkLabel: "Open diagram",
+      summary: "The static visual map of the physical devices, Linux drivers, what the OS sees, and the next action for each device.",
+      related: ["connections"]
+    }
+  ];
+
+  const CROSS = [
+    ["usb", "wifi"],
+    ["usb", "bt"],
+    ["usb", "serial"],
+    ["usb", "esp32"],
+    ["usb", "driver"],
+    ["driver", "wifi"],
+    ["esp32", "wifi"],
+    ["esp32", "serial"],
+    ["questions", "wifi"],
+    ["questions", "esp32"],
+    ["questions", "serial"]
+  ];
+
+  const nodeById = Object.fromEntries(NODES.map(n => [n.id, n]));
+  const treeParent = Object.fromEntries(NODES.filter(n => n.parent).map(n => [n.id, n.parent]));
+  const treeEdges = NODES.filter(n => n.parent).map(n => ({
+    from: n.parent,
+    to: n.id,
+    type: n.kind === "source" ? "source" : "tree"
+  }));
+  const crossEdges = CROSS.map(([from, to]) => ({ from, to, type: "cross" }));
+  const allEdges = [...treeEdges, ...crossEdges];
+
+  const svg = document.getElementById("graph");
+  const edgeLayer = document.createElementNS(NS, "g");
+  const nodeLayer = document.createElementNS(NS, "g");
+  svg.append(edgeLayer, nodeLayer);
+
+  const defs = document.createElementNS(NS, "defs");
+  defs.innerHTML = `
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,8 L7,4 z" fill="#b9b4aa"/>
+    </marker>
+    <marker id="arrow-active" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,8 L7,4 z" fill="#1a73e8"/>
+    </marker>
+    <symbol id="i-index" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v18H6.5A2.5 2.5 0 0 1 4 18.5z"/><path d="M8 3v18"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v5h5"/></symbol>
+    <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 6h7l2 3h9v10H3z"/></symbol>
+    <symbol id="i-wifi" viewBox="0 0 24 24"><path d="M3 9a15 15 0 0 1 18 0"/><path d="M6 12.5a10.5 10.5 0 0 1 12 0"/><path d="M9 16a5.5 5.5 0 0 1 6 0"/><circle cx="12" cy="19" r="1"/></symbol>
+    <symbol id="i-bt" viewBox="0 0 24 24"><path d="M8 4l8 8-8 8V4z"/><path d="M8 4l8 8"/><path d="M8 20l8-8"/></symbol>
+    <symbol id="i-usb" viewBox="0 0 24 24"><path d="M12 3v18"/><path d="M12 7l4-3 2 2-4 3"/><path d="M12 13l-4-3-2 2 4 3"/><circle cx="12" cy="20" r="1"/></symbol>
+    <symbol id="i-terminal" viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/><path d="M7 9l3 3-3 3"/><path d="M12 15h5"/></symbol>
+    <symbol id="i-chip" viewBox="0 0 24 24"><rect x="7" y="7" width="10" height="10" rx="2"/><path d="M9 3v4M15 3v4M9 17v4M15 17v4M3 9h4M3 15h4M17 9h4M17 15h4"/></symbol>
+    <symbol id="i-disk" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="2"/><path d="M12 4v6M12 14v6"/></symbol>
+    <symbol id="i-diagram" viewBox="0 0 24 24"><rect x="3" y="4" width="7" height="5" rx="1"/><rect x="14" y="4" width="7" height="5" rx="1"/><rect x="8.5" y="15" width="7" height="5" rx="1"/><path d="M6.5 9v3h11V9M12 12v3"/></symbol>
+    <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 4 2c-.9.6-1.5 1.1-1.5 2.5"/><circle cx="12" cy="17" r=".5"/></symbol>
+  `;
+  svg.prepend(defs);
+
+  function escapeXml(value) {
+    return String(value).replace(/[<>&"']/g, ch => ({
+      "<": "&lt;", ">": "&gt;", "&": "&amp;", "\"": "&quot;", "'": "&apos;"
+    }[ch]));
+  }
+
+  function edgePath(a, b, type, index) {
+    if (a.id === "index" && b.id === "schema") {
+      const cx = a.x + a.w / 2;
+      return `M ${cx} ${a.y} C ${cx} ${a.y - 34}, ${b.x + b.w / 2} ${b.y + b.h + 34}, ${b.x + b.w / 2} ${b.y + b.h}`;
+    }
+    if (type === "cross") {
+      const x = a.x + a.w;
+      const y1 = a.y + a.h / 2;
+      const y2 = b.y + b.h / 2;
+      const bow = 46 + (index % 4) * 22;
+      return `M ${x} ${y1} C ${x + bow} ${y1}, ${x + bow} ${y2}, ${x} ${y2}`;
+    }
+    const ax = a.x + a.w;
+    const ay = a.y + a.h / 2;
+    const bx = b.x;
+    const by = b.y + b.h / 2;
+    if (type === "source") {
+      const corridor = a.id === "inventory" ? 42 : 862;
+      return `M ${ax} ${ay} C ${ax + 52} ${ay}, ${ax + 52} ${corridor}, ${ax + 150} ${corridor} C ${bx - 150} ${corridor}, ${bx - 52} ${by}, ${bx} ${by}`;
+    }
+    const dx = Math.max(58, Math.abs(bx - ax) * .48);
+    return `M ${ax} ${ay} C ${ax + dx} ${ay}, ${bx - dx} ${by}, ${bx} ${by}`;
+  }
+
+  const edgeEls = new Map();
+  const nodeEls = new Map();
+
+  allEdges.forEach((e, index) => {
+    const a = nodeById[e.from];
+    const b = nodeById[e.to];
+    const path = document.createElementNS(NS, "path");
+    path.setAttribute("d", edgePath(a, b, e.type, index));
+    path.setAttribute("class", `edge ${e.type}`);
+    if (e.type !== "cross") path.setAttribute("marker-end", "url(#arrow)");
+    path.dataset.from = e.from;
+    path.dataset.to = e.to;
+    path.dataset.type = e.type;
+    edgeLayer.append(path);
+    edgeEls.set(`${e.from}->${e.to}`, path);
+  });
+
+  NODES.forEach(n => {
+    const g = document.createElementNS(NS, "g");
+    g.setAttribute("class", `node kind-${n.kind}`);
+    g.setAttribute("transform", `translate(${n.x},${n.y})`);
+    g.setAttribute("tabindex", "0");
+    g.setAttribute("role", "button");
+    g.setAttribute("aria-label", `${n.title}. ${n.sub}`);
+    g.dataset.id = n.id;
+
+    const iconY = (n.h - 18) / 2;
+    const titleY = n.h >= 70 ? 30 : 23;
+    const subY = n.h >= 70 ? 50 : 40;
+    const isPage = n.kind === "page";
+    const dot = n.status ? `<circle class="status-dot ${n.status}" cx="${n.w - 14}" cy="17" r="4"/>` : "";
+    const rail = isPage ? `<rect class="node-rail" x="0" y="12" width="3" height="${n.h - 24}" rx="1.5"/>` : "";
+    const ring = `<circle class="dwell-ring" cx="23" cy="${n.h / 2}" r="12" pathLength="100" transform="rotate(-90 23 ${n.h / 2})"/>`;
+
+    g.innerHTML = `
+      <rect class="node-bg" width="${n.w}" height="${n.h}" rx="12"/>
+      ${rail}
+      ${ring}
+      <svg class="node-icon" x="14" y="${iconY}" width="18" height="18" aria-hidden="true"><use href="#i-${n.icon}"/></svg>
+      <text class="node-title" x="42" y="${titleY}">${escapeXml(n.title)}</text>
+      <text class="node-sub" x="42" y="${subY}">${escapeXml(n.sub)}</text>
+      ${dot}
+    `;
+    nodeLayer.append(g);
+    nodeEls.set(n.id, g);
+  });
+
+  const cardEl = document.getElementById("route-card");
+  const cardKind = document.getElementById("card-kind");
+  const cardTitle = document.getElementById("card-title");
+  const cardPath = document.getElementById("card-path");
+  const cardSummary = document.getElementById("card-summary");
+  const cardRoute = document.getElementById("card-route");
+  const cardRelated = document.getElementById("card-related");
+  const cardLink = document.getElementById("card-link");
+  const cardClose = document.getElementById("card-close");
+
+  let pinnedId = null;
+  let previewId = null;
+  let dwellTimer = null;
+  let closeTimer = null;
+  let dwellNodeId = null;
+
+  function routeTo(id) {
+    const route = [];
+    let current = id;
+    while (current) {
+      route.unshift(current);
+      current = treeParent[current];
+    }
+    return route;
+  }
+
+  function relatedTo(id) {
+    const set = new Set();
+    for (const e of allEdges) {
+      if (e.from === id || e.to === id) {
+        if (e.from !== id) set.add(e.from);
+        if (e.to !== id) set.add(e.to);
+      }
+    }
+    return [...set];
+  }
+
+  function updateActive(targetId) {
+    if (!targetId) {
+      nodeEls.forEach(el => el.classList.remove("is-active", "is-selected", "is-related", "is-dim"));
+      edgeEls.forEach(el => {
+        el.classList.remove("is-active", "is-related", "is-dim");
+        if (el.dataset.type !== "cross") el.setAttribute("marker-end", "url(#arrow)");
+      });
+      return;
+    }
+
+    const route = new Set(routeTo(targetId));
+    const related = new Set(relatedTo(targetId));
+
+    nodeEls.forEach((el, id) => {
+      el.classList.toggle("is-active", route.has(id));
+      el.classList.toggle("is-selected", id === targetId);
+      el.classList.toggle("is-related", !route.has(id) && related.has(id));
+      el.classList.toggle("is-dim", !route.has(id) && !related.has(id) && id !== targetId);
+    });
+
+    edgeEls.forEach((el) => {
+      const { from, to, type } = el.dataset;
+      let active = false;
+      let relatedEdge = false;
+      if (type === "cross") {
+        relatedEdge = from === targetId || to === targetId;
+      } else {
+        active = route.has(from) && route.has(to) && treeParent[to] === from;
+        relatedEdge = !active && (from === targetId || to === targetId);
+      }
+      el.classList.toggle("is-active", active);
+      el.classList.toggle("is-related", relatedEdge);
+      el.classList.toggle("is-dim", !active && !relatedEdge);
+      if (active) {
+        el.setAttribute("marker-end", "url(#arrow-active)");
+      } else if (type !== "cross") {
+        el.setAttribute("marker-end", "url(#arrow)");
+      }
+    });
+  }
+
+  function kindLabel(n) {
+    if (n.kind === "hub") return "Hub";
+    if (n.kind === "schema") return "Schema";
+    if (n.kind === "source") return n.tag === "svg" ? "Artifact" : "Raw source";
+    if (n.kind === "page") return "Wiki page";
+    return "Section";
+  }
+
+  function updateCard(id) {
+    const n = nodeById[id];
+    if (!n) return;
+    cardKind.textContent = kindLabel(n);
+    cardTitle.textContent = n.title;
+    cardPath.textContent = n.path;
+    cardSummary.textContent = n.summary;
+    cardLink.href = n.path;
+    cardLink.textContent = n.linkLabel || "Open";
+    cardEl.dataset.pinned = pinnedId === id ? "true" : "false";
+
+    const route = routeTo(id);
+    cardRoute.innerHTML = "";
+    route.forEach((rid, i) => {
+      if (i) {
+        const sep = document.createElement("span");
+        sep.className = "sep";
+        sep.textContent = "→";
+        cardRoute.append(sep);
+      }
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.textContent = nodeById[rid].title;
+      btn.addEventListener("click", () => openCard(rid, true));
+      cardRoute.append(btn);
+    });
+
+    const related = relatedTo(id).filter(rid => nodeById[rid]);
+    cardRelated.innerHTML = "";
+    if (!related.length) {
+      const span = document.createElement("span");
+      span.className = "path";
+      span.textContent = "No cross-links yet.";
+      cardRelated.append(span);
+    } else {
+      related.forEach(rid => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.textContent = nodeById[rid].title;
+        btn.addEventListener("click", () => openCard(rid, true));
+        cardRelated.append(btn);
+      });
+    }
+  }
+
+  function positionCard(id) {
+    const el = nodeEls.get(id);
+    if (!el) return;
+    cardEl.hidden = false;
+    cardEl.style.visibility = "hidden";
+    const rect = el.getBoundingClientRect();
+    const gap = 14;
+    const cardRect = cardEl.getBoundingClientRect();
+    let left = rect.right + gap;
+    let side = "right";
+    if (left + cardRect.width > window.innerWidth - 16) {
+      left = rect.left - cardRect.width - gap;
+      side = "left";
+    }
+    if (left < 16) left = Math.max(16, window.innerWidth - cardRect.width - 16);
+    let top = rect.top;
+    if (top + cardRect.height > window.innerHeight - 16) {
+      top = window.innerHeight - cardRect.height - 16;
+    }
+    if (top < 16) top = 16;
+    cardEl.style.left = `${Math.round(left)}px`;
+    cardEl.style.top = `${Math.round(top)}px`;
+    cardEl.dataset.side = side;
+    cardEl.style.visibility = "";
+  }
+
+  function openCard(id, pin = false) {
+    cancelClose();
+    cancelDwell(id);
+    const el = nodeEls.get(id);
+    if (!el) return;
+    if (pin) {
+      pinnedId = id;
+      previewId = null;
+      if (history.replaceState) history.replaceState(null, "", `#${id}`);
+    } else {
+      previewId = id;
+    }
+    updateActive(id);
+    updateCard(id);
+    positionCard(id);
+  }
+
+  function closeCard() {
+    clearTimeout(closeTimer);
+    clearTimeout(dwellTimer);
+    nodeEls.forEach(el => el.classList.remove("is-dwelling"));
+    pinnedId = null;
+    previewId = null;
+    dwellNodeId = null;
+    cardEl.hidden = true;
+    updateActive(null);
+    if (history.replaceState) history.replaceState(null, "", location.pathname + location.search);
+  }
+
+  function scheduleClose() {
+    clearTimeout(closeTimer);
+    closeTimer = setTimeout(() => {
+      if (!previewId) return;
+      previewId = null;
+      if (pinnedId) {
+        updateActive(pinnedId);
+        updateCard(pinnedId);
+        positionCard(pinnedId);
+      } else {
+        cardEl.hidden = true;
+        updateActive(null);
+      }
+    }, 200);
+  }
+
+  function cancelClose() {
+    clearTimeout(closeTimer);
+  }
+
+  function startDwell(id) {
+    cancelClose();
+    if (pinnedId === id || previewId === id) return;
+    cancelDwell();
+    dwellNodeId = id;
+    const el = nodeEls.get(id);
+    if (!el) return;
+    el.classList.add("is-dwelling");
+    dwellTimer = setTimeout(() => {
+      el.classList.remove("is-dwelling");
+      dwellNodeId = null;
+      openCard(id, false);
+    }, 900);
+  }
+
+  function cancelDwell(id) {
+    clearTimeout(dwellTimer);
+    dwellTimer = null;
+    const target = id || dwellNodeId;
+    if (target) {
+      const el = nodeEls.get(target);
+      if (el) el.classList.remove("is-dwelling");
+    }
+    dwellNodeId = null;
+  }
+
+  function activeId() {
+    return previewId || pinnedId;
+  }
+
+  function repositionCard() {
+    const id = activeId();
+    if (id && !cardEl.hidden) positionCard(id);
+  }
+
+  NODES.forEach(n => {
+    const el = nodeEls.get(n.id);
+    el.addEventListener("pointerenter", () => startDwell(n.id));
+    el.addEventListener("pointerleave", () => {
+      cancelDwell(n.id);
+      scheduleClose();
+    });
+    el.addEventListener("focus", () => startDwell(n.id));
+    el.addEventListener("blur", () => {
+      cancelDwell(n.id);
+      scheduleClose();
+    });
+    el.addEventListener("click", () => openCard(n.id, true));
+    el.addEventListener("keydown", event => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        openCard(n.id, true);
+      }
+    });
+  });
+
+  cardEl.addEventListener("pointerenter", cancelClose);
+  cardEl.addEventListener("pointerleave", scheduleClose);
+  cardClose.addEventListener("click", closeCard);
+
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape") {
+      cancelDwell();
+      closeCard();
+    }
+  });
+
+  document.addEventListener("pointerdown", event => {
+    if (cardEl.hidden) return;
+    if (cardEl.contains(event.target)) return;
+    if (event.target.closest && event.target.closest(".node")) return;
+    closeCard();
+  });
+
+  window.addEventListener("scroll", repositionCard, { passive: true });
+  window.addEventListener("resize", repositionCard);
+
+  document.getElementById("reset").addEventListener("click", () => {
+    cancelDwell();
+    closeCard();
+  });
+
+  const initial = decodeURIComponent(location.hash.slice(1));
+  requestAnimationFrame(() => {
+    if (initial && nodeById[initial]) {
+      openCard(initial, true);
+    } else {
+      updateActive(null);
+    }
+    document.body.classList.add("is-loaded");
+  });
+})();
+</script>
+</body>
+</html>
