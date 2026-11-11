@@ -388,6 +388,100 @@
     .map-head { flex-direction: column; }
     #graph { min-height: 380px; }
   }
+
+  .shell { transition: filter 180ms ease; }
+  body.is-feeding .shell { filter: blur(8px); }
+
+  .feed {
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+  }
+  .feed[hidden] { display: none !important; }
+  .feed-veil {
+    position: absolute;
+    inset: 0;
+    background: rgba(31, 35, 40, .2);
+  }
+  .feed-strand {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    pointer-events: none;
+  }
+  .feed-strand line {
+    stroke: #16141a;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+  }
+  .feed-widow {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 112px;
+    height: 112px;
+    margin: -56px 0 0 -56px;
+    pointer-events: none;
+  }
+  .feed-widow img {
+    display: block;
+    width: 112px;
+    height: 112px;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+  }
+  .feed-parcel {
+    position: absolute;
+    right: 8px;
+    bottom: 16px;
+    width: 16px;
+    height: 12px;
+    background: #f4efe4;
+    border: 2px solid #16141a;
+    box-shadow: 2px 2px 0 #16141a;
+  }
+  .feed-parcel::after {
+    content: "";
+    position: absolute;
+    left: 1px;
+    right: 1px;
+    top: 3px;
+    height: 2px;
+    background: #d23a32;
+  }
+  .feed-cue {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 32px;
+    margin: 0;
+    text-align: center;
+    color: var(--ink);
+    font-size: 13px;
+    letter-spacing: .04em;
+    pointer-events: none;
+  }
+  .feed-toast {
+    position: fixed;
+    z-index: 90;
+    left: 50%;
+    bottom: 28px;
+    max-width: min(420px, calc(100% - 32px));
+    margin: 0;
+    padding: 8px 12px;
+    overflow: hidden;
+    transform: translateX(-50%);
+    border-radius: 8px;
+    background: var(--ink);
+    color: var(--surface);
+    font-size: 13px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .feed-toast[hidden] { display: none !important; }
+
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
   }
@@ -401,7 +495,7 @@
       <div>
         <p class="eyebrow">vicki / demo wiki</p>
         <h1>Wiki routes</h1>
-        <p class="lede">Raw sources are immutable. Wiki pages compile them. The schema keeps the routes honest. Hover a node for one second to open its card; click to pin it.</p>
+        <p class="lede">Raw sources are immutable. Wiki pages compile them. The schema keeps the routes honest. Hover a node for one second to open its card; click to pin it. Drag a file onto the map and she comes down for it.</p>
       </div>
     </div>
     <div class="topmeta" aria-label="Wiki counts">
@@ -465,6 +559,19 @@
     <span>Design pass: <a href="https://github.com/heydamir/unslop">unslop</a> by Damir Sokolovsky, CC BY 4.0.</span>
   </footer>
 </div>
+
+<div id="feed" class="feed" hidden role="dialog" aria-modal="true" aria-labelledby="feed-cue">
+  <div class="feed-veil"></div>
+  <svg class="feed-strand" aria-hidden="true">
+    <line id="feed-line" x1="0" y1="0" x2="0" y2="0"></line>
+  </svg>
+  <div id="feed-widow" class="feed-widow">
+    <img id="feed-sprite" alt="" width="112" height="112" draggable="false">
+    <span id="feed-parcel" class="feed-parcel" hidden></span>
+  </div>
+  <p id="feed-cue" class="feed-cue">Feed Vicki</p>
+</div>
+<p id="feed-toast" class="feed-toast" role="status" aria-live="polite" hidden></p>
 
 <script>
 (() => {
@@ -992,6 +1099,171 @@
     }
     document.body.classList.add("is-loaded");
   });
+})();
+</script>
+<script>
+(() => {
+  const shell = document.querySelector(".shell");
+  const feed = document.getElementById("feed");
+  const widow = document.getElementById("feed-widow");
+  const line = document.getElementById("feed-line");
+  const parcel = document.getElementById("feed-parcel");
+  const cue = document.getElementById("feed-cue");
+  const toast = document.getElementById("feed-toast");
+  const sprite = document.getElementById("feed-sprite");
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const HIT = 210;
+
+  let mode = "idle";
+  let ax = 0;
+  let ay = -120;
+  let tx = 0;
+  let ty = 0;
+  let anchorX = 0;
+  let raf = 0;
+  let lastOver = 0;
+  let toastTimer = 0;
+  let pendingToast = "";
+
+  sprite.src = "assets/vicki-widow.svg";
+  const painted = new Image();
+  painted.onload = () => {
+    if (painted.naturalWidth) sprite.src = "assets/vicki-widow.png";
+  };
+  painted.src = "assets/vicki-widow.png";
+
+  function fileDrag(event) {
+    const types = event.dataTransfer && event.dataTransfer.types;
+    if (!types) return false;
+    for (const type of types) {
+      if (type === "Files") return true;
+    }
+    return false;
+  }
+
+  function place() {
+    widow.style.transform = `translate3d(${ax}px, ${ay}px, 0)`;
+    line.setAttribute("x1", String(anchorX));
+    line.setAttribute("y1", "0");
+    line.setAttribute("x2", String(ax));
+    line.setAttribute("y2", String(ay - 56));
+  }
+
+  function loop(now) {
+    raf = 0;
+    if (mode === "idle") return;
+    if (mode === "hunt" && now - lastOver > 420) {
+      leave(false);
+    }
+    const k = reduce ? 1 : (mode === "leave" ? 0.2 : 0.14);
+    ax += (tx - ax) * k;
+    ay += (ty - ay) * k;
+    if (mode === "hunt") anchorX += (tx - anchorX) * (reduce ? 1 : 0.05);
+    place();
+    if (mode === "leave" && (reduce || ay < -80)) {
+      finish();
+      return;
+    }
+    raf = requestAnimationFrame(loop);
+  }
+
+  function kick() {
+    if (!raf) raf = requestAnimationFrame(loop);
+  }
+
+  function wake(x, y) {
+    if (mode === "leave") return;
+    const first = mode === "idle";
+    mode = "hunt";
+    feed.hidden = false;
+    document.body.classList.add("is-feeding");
+    if (shell) shell.inert = true;
+    parcel.hidden = true;
+    cue.hidden = false;
+    tx = x;
+    ty = y + 36;
+    lastOver = performance.now();
+    if (first) {
+      anchorX = x;
+      ax = x;
+      ay = reduce ? ty : -110;
+      place();
+    }
+    kick();
+  }
+
+  function aim(x, y) {
+    if (mode !== "hunt") return;
+    tx = x;
+    ty = y + 36;
+    lastOver = performance.now();
+  }
+
+  function leave(caught, message) {
+    if (mode !== "hunt") return;
+    mode = "leave";
+    parcel.hidden = !caught;
+    cue.hidden = true;
+    pendingToast = caught ? message : "";
+    tx = anchorX;
+    ty = -160;
+    lastOver = performance.now();
+  }
+
+  function finish() {
+    mode = "idle";
+    feed.hidden = true;
+    document.body.classList.remove("is-feeding");
+    if (shell) shell.inert = false;
+    parcel.hidden = true;
+    cue.hidden = false;
+    if (raf) cancelAnimationFrame(raf);
+    raf = 0;
+    if (!pendingToast) return;
+    toast.textContent = pendingToast;
+    pendingToast = "";
+    toast.hidden = false;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => {
+      toast.hidden = true;
+    }, 2400);
+  }
+
+  function caughtLabel(files) {
+    if (files.length === 1) return `Vicki took ${files[0].name}`;
+    return `Vicki took ${files.length} files`;
+  }
+
+  document.addEventListener("dragenter", event => {
+    if (!fileDrag(event)) return;
+    event.preventDefault();
+  }, true);
+
+  document.addEventListener("dragover", event => {
+    if (!fileDrag(event)) return;
+    event.preventDefault();
+    if (event.dataTransfer) event.dataTransfer.dropEffect = "copy";
+    if (mode === "leave") return;
+    if (mode === "idle") wake(event.clientX, event.clientY);
+    else aim(event.clientX, event.clientY);
+  }, true);
+
+  document.addEventListener("drop", event => {
+    if (!fileDrag(event)) return;
+    event.preventDefault();
+    if (mode !== "hunt") return;
+    const files = Array.from(event.dataTransfer.files || []);
+    const near = Math.hypot(event.clientX - ax, event.clientY - ay) < HIT;
+    if (files.length && near) leave(true, caughtLabel(files));
+    else leave(false);
+  }, true);
+
+  document.addEventListener("keydown", event => {
+    if (event.key !== "Escape" || mode === "idle") return;
+    event.preventDefault();
+    event.stopPropagation();
+    if (mode === "hunt") leave(false);
+  }, true);
 })();
 </script>
 </body>
