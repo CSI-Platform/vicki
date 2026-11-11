@@ -4,7 +4,7 @@ A small public demo of an LLM-compiled wiki, rendered as an interactive route ma
 
 **Open [`index.html`](index.html) in a browser.** No build step, no dependencies.
 
-The demo data comes from a Linux workstation called Hulk. The wiki has two compiled pages, two raw captures, and a static connection diagram. The route map is the interface: it shows pages, sources, sections, and the links between them.
+The demo data comes from a Linux workstation called Hulk, plus the public AWS MSP AI Hackathon rules and FAQ captured on 2026-11-10. The wiki has six compiled pages, four raw captures, and a static connection diagram. The route map is the interface: it shows pages, sources, sections, and the links between them.
 
 ## Use the map
 
@@ -12,7 +12,7 @@ The demo data comes from a Linux workstation called Hulk. The wiki has two compi
 - Move away early and the dwell cancels.
 - Click a node to pin its card.
 - `Esc`, the close button, or clicking outside dismisses it.
-- Deep links work: `index.html#wifi`, `index.html#esp32`, `index.html#serial`.
+- Deep links work: `index.html#wifi`, `index.html#esp32`, `index.html#serial`, `index.html#hackathon`.
 
 ## Layout
 

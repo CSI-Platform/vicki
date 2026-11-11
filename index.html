@@ -405,8 +405,8 @@
       </div>
     </div>
     <div class="topmeta" aria-label="Wiki counts">
-      <span class="chip"><strong>2</strong> wiki pages</span>
-      <span class="chip"><strong>2</strong> raw sources</span>
+      <span class="chip"><strong>6</strong> wiki pages</span>
+      <span class="chip"><strong>4</strong> raw sources</span>
       <span class="chip"><strong>1</strong> diagram</span>
     </div>
   </header>
@@ -416,7 +416,7 @@
       <div class="map-head">
         <div>
           <p class="eyebrow">Route map</p>
-          <h2 id="map-title">Pages, sources, and the hardware they describe</h2>
+          <h2 id="map-title">Pages, sources, and the sections they compile</h2>
           <p>Solid lines are page routes. Dashed lines are raw sources. Dotted lines are related routes. Hover a node for one second to open its card; click to pin it.</p>
         </div>
         <div class="map-actions">
@@ -425,7 +425,7 @@
       </div>
 
       <div class="graph-wrap">
-        <svg id="graph" viewBox="0 0 1240 900" role="img" aria-label="Interactive graph of the vicki demo wiki. Hover a node for one second to open its route card."></svg>
+        <svg id="graph" viewBox="0 0 1240 1740" role="img" aria-label="Interactive graph of the vicki demo wiki. Hover a node for one second to open its route card."></svg>
       </div>
 
       <div class="legend" aria-label="Legend">
@@ -472,11 +472,11 @@
   const NODES = [
     {
       id: "index", kind: "hub", x: 40, y: 390, w: 230, h: 72,
-      title: "index.md", sub: "Wiki index · 2 pages, 2 raw sources",
+      title: "index.md", sub: "Wiki index · 6 pages, 4 raw sources",
       icon: "index", tag: "index",
       path: "index.md", linkLabel: "Open index",
-      summary: "The content-oriented catalog. It links the two compiled wiki pages, the two raw sources, and the placeholder folders in this public demo.",
-      related: ["schema", "inventory", "connections", "notes", "experiments"]
+      summary: "The content-oriented catalog. It links the six compiled wiki pages, the four raw sources, and the placeholder folders in this public demo.",
+      related: ["schema", "inventory", "connections", "hackathon", "eligibility", "submission", "judging", "notes", "experiments"]
     },
     {
       id: "schema", kind: "schema", x: 40, y: 120, w: 230, h: 58,
@@ -563,6 +563,74 @@
       path: "wiki/hulk-connections-map.svg", linkLabel: "Open diagram",
       summary: "The static visual map of the physical devices, Linux drivers, what the OS sees, and the next action for each device.",
       related: ["connections"]
+    },
+
+    {
+      id: "hackathon", kind: "page", x: 360, y: 968, w: 220, h: 58,
+      parent: "index",
+      title: "aws-msp-hackathon.md", sub: "Theme, dates, tracks",
+      icon: "file", tag: "page",
+      path: "wiki/aws-msp-hackathon.md", linkLabel: "Open page",
+      summary: "The compiled overview of the AWS MSP AI Hackathon: theme, Pacific Time dates, sponsor and administrator, the two tracks, and the $64,000 prize pool.",
+      related: ["hk-dates", "hk-tracks", "rulesraw", "faqraw", "eligibility", "submission", "judging"]
+    },
+    {
+      id: "eligibility", kind: "page", x: 360, y: 1151, w: 220, h: 58,
+      parent: "index",
+      title: "aws-msp-eligibility.md", sub: "Who can enter, credits",
+      icon: "file", tag: "page",
+      path: "wiki/aws-msp-eligibility.md", linkLabel: "Open page",
+      summary: "Who can enter, how registration works, which places are excluded, and how to request the $200 AWS promotional credits.",
+      related: ["hk-who", "hk-excluded", "hk-credits", "hackathon"]
+    },
+    {
+      id: "submission", kind: "page", x: 360, y: 1366, w: 220, h: 58,
+      parent: "index",
+      title: "aws-msp-submission.md", sub: "Build bar and checklist",
+      icon: "file", tag: "page",
+      path: "wiki/aws-msp-submission.md", linkLabel: "Open page",
+      summary: "What to build, which AWS AI services qualify, and the submission checklist: public URL, private repo, 3-minute video, architecture diagram, and HLD.",
+      related: ["hk-services", "hk-checklist", "hk-demo", "hackathon", "judging"]
+    },
+    {
+      id: "judging", kind: "page", x: 360, y: 1581, w: 220, h: 58,
+      parent: "index",
+      title: "aws-msp-judging.md", sub: "Criteria, prizes, IP",
+      icon: "file", tag: "page",
+      path: "wiki/aws-msp-judging.md", linkLabel: "Open page",
+      summary: "Stage 1 pass/fail, the four equally weighted scores, the prize table, the one-prize rule, ownership, and where to ask for help.",
+      related: ["hk-criteria", "hk-prizes", "hk-terms", "hackathon", "submission"]
+    },
+
+    { id: "hk-dates", kind: "section", x: 680, y: 940, w: 240, h: 50, parent: "hackathon", title: "Dates", sub: "Nov 2, 2026 to Jan 28, 2027", icon: "file", path: "wiki/aws-msp-hackathon.md#dates", linkLabel: "Open section", summary: "Registration and submission close Dec 11, 2026 at 12:00 pm PT. Judging runs Jan 5 to Jan 22, 2027. Winners are announced on or around Jan 28, 2027.", related: ["hackathon"] },
+    { id: "hk-tracks", kind: "section", x: 680, y: 1005, w: 240, h: 50, parent: "hackathon", title: "Tracks", sub: "Internal ops, or customer delivery", icon: "diagram", path: "wiki/aws-msp-hackathon.md#tracks", linkLabel: "Open section", summary: "Track 1 is Run Your MSP Better. Track 2 is Deliver AI-Driven Outcomes for Customers. Each submission picks one track.", related: ["hackathon", "hk-services", "hk-prizes"] },
+    { id: "hk-who", kind: "section", x: 680, y: 1090, w: 240, h: 50, parent: "eligibility", title: "Who can enter", sub: "APN partner, age of majority", icon: "help", path: "wiki/aws-msp-eligibility.md#who-can-enter", linkLabel: "Open section", summary: "Individuals, teams, and organizations tied to an APN partner that has signed the APN terms. MSP Program Validation is optional. Students need that same employment or authorization.", related: ["eligibility", "hk-excluded"] },
+    { id: "hk-excluded", kind: "section", x: 680, y: 1155, w: 240, h: 50, parent: "eligibility", title: "Excluded places", sub: "Residence, not citizenship", icon: "help", path: "wiki/aws-msp-eligibility.md#excluded-places", linkLabel: "Open section", summary: "Residents of, and organizations domiciled in, Brazil, Quebec, Russia, Crimea, Cuba, Iran, North Korea, and other comprehensively OFAC-sanctioned countries cannot enter or take a prize.", related: ["eligibility", "hk-who"] },
+    { id: "hk-credits", kind: "section", x: 680, y: 1220, w: 240, h: 50, parent: "eligibility", title: "AWS credits", sub: "$200 per team, expires Dec 31", icon: "chip", path: "wiki/aws-msp-eligibility.md#aws-credits", linkLabel: "Open section", summary: "$200 in AWS Promotional Credits per team, while supplies last, requested on the promo form with the last 4 digits of the AWS account ID. They expire Dec 31, 2026 at 11:59 pm PT.", related: ["eligibility", "hk-services"] },
+    { id: "hk-services", kind: "section", x: 680, y: 1305, w: 240, h: 50, parent: "submission", title: "Qualifying services", sub: "Bedrock, Strands, Kiro, and more", icon: "chip", path: "wiki/aws-msp-submission.md#qualifying-aws-ai-services", linkLabel: "Open section", summary: "At least one AWS AI service has to do real work and be called at runtime. Bedrock, AgentCore, Strands, Quick, Kiro, Frontier Agents, SageMaker AI, Transform, Q Developer, and Nova are the named set.", related: ["submission", "hk-tracks", "hk-criteria"] },
+    { id: "hk-checklist", kind: "section", x: 680, y: 1370, w: 240, h: 50, parent: "submission", title: "Submission checklist", sub: "URL, repo, video, diagram, HLD", icon: "file", path: "wiki/aws-msp-submission.md#submission-checklist", linkLabel: "Open section", summary: "Public project URL, text description, private GitHub or GitLab repo shared with the two review addresses, YouTube demo, architecture diagram, and high-level design. English, or an English translation.", related: ["submission", "hk-demo", "hk-criteria"] },
+    { id: "hk-demo", kind: "section", x: 680, y: 1435, w: 240, h: 50, parent: "submission", title: "Demo video", sub: "About 3 minutes, public on YouTube", icon: "diagram", path: "wiki/aws-msp-submission.md#demo-video", linkLabel: "Open section", summary: "About 3 minutes, public on YouTube, showing the project on its target device and the internal accounts, including upstream and downstream environments. Judges are not required to watch past 3 minutes.", related: ["submission", "hk-checklist"] },
+    { id: "hk-criteria", kind: "section", x: 680, y: 1520, w: 240, h: 50, parent: "judging", title: "Judging criteria", sub: "Four scores, 25% each", icon: "help", path: "wiki/aws-msp-judging.md#judging-criteria", linkLabel: "Open section", summary: "Stage 1 is pass/fail on theme fit and required AWS AI use. Stage 2 weights Technological Implementation, Design, Potential Impact, and Innovation/Idea at 25% each.", related: ["judging", "hk-checklist", "hk-services"] },
+    { id: "hk-prizes", kind: "section", x: 680, y: 1585, w: 240, h: 50, parent: "judging", title: "Prizes", sub: "$64,000, one prize per project", icon: "disk", path: "wiki/aws-msp-judging.md#prizes", linkLabel: "Open section", summary: "Each track pays $10,000, $7,000, and $5,000 for first through third, plus five $2,000 special prizes. A project can win only one prize. The top three cannot also take a special prize.", related: ["judging", "hk-tracks"] },
+    { id: "hk-terms", kind: "section", x: 680, y: 1650, w: 240, h: 50, parent: "judging", title: "Ownership", sub: "You keep IP; 3-year promotion", icon: "book", path: "wiki/aws-msp-judging.md#ownership-and-promotion", linkLabel: "Open section", summary: "Entrants keep their IP. AWS gets a non-exclusive license to judge the entry. AWS and Devpost may promote the submission and the contributors' names and likenesses during the hackathon and for three years after.", related: ["judging", "hk-checklist"] },
+
+    {
+      id: "rulesraw", kind: "source", x: 1020, y: 836, w: 190, h: 50,
+      parent: "hackathon",
+      title: "Official rules", sub: "raw · 2026-11-10",
+      icon: "file", tag: "raw",
+      path: "raw/aws-msp-ai-hackathon-rules-2026-11-10.md", linkLabel: "Open raw",
+      summary: "The immutable official-rules clipping. Registration, eligibility, submission requirements, judging criteria, prizes, IP, and disputes.",
+      related: ["hackathon"]
+    },
+    {
+      id: "faqraw", kind: "source", x: 1020, y: 892, w: 190, h: 50,
+      parent: "hackathon",
+      title: "Hackathon FAQ", sub: "raw · 2026-11-10",
+      icon: "file", tag: "raw",
+      path: "raw/aws-msp-ai-hackathon-faq-2026-11-10.md", linkLabel: "Open raw",
+      summary: "The immutable FAQ clipping. Qualifying services, credits, video and repo rules, prize limits, and the Discord and email help channels.",
+      related: ["hackathon"]
     }
   ];
 
@@ -577,7 +645,13 @@
     ["esp32", "serial"],
     ["questions", "wifi"],
     ["questions", "esp32"],
-    ["questions", "serial"]
+    ["questions", "serial"],
+    ["hk-tracks", "hk-services"],
+    ["hk-tracks", "hk-prizes"],
+    ["hk-services", "hk-criteria"],
+    ["hk-checklist", "hk-criteria"],
+    ["hk-checklist", "hk-terms"],
+    ["hk-credits", "hk-services"]
   ];
 
   const nodeById = Object.fromEntries(NODES.map(n => [n.id, n]));
@@ -641,7 +715,7 @@
     const bx = b.x;
     const by = b.y + b.h / 2;
     if (type === "source") {
-      const corridor = a.id === "inventory" ? 42 : 862;
+      const corridor = a.id === "inventory" ? 42 : a.id === "hackathon" ? 888 : 862;
       return `M ${ax} ${ay} C ${ax + 52} ${ay}, ${ax + 52} ${corridor}, ${ax + 150} ${corridor} C ${bx - 150} ${corridor}, ${bx - 52} ${by}, ${bx} ${by}`;
     }
     const dx = Math.max(58, Math.abs(bx - ax) * .48);
